@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,8 +11,9 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
+	_ "github.com/lib/pq"
 
-	"go-app/internal/routes"
+	"go-app/internal/rest"
 )
 
 func main() {
@@ -31,8 +33,19 @@ func main() {
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, "X-Client-Info"},
 	}))
 
+	// Setup Database
+	connStr := os.Getenv("DATABASE_URL")
+	dbConn, err := sql.Open("postgres", connStr)
+	if err != nil {
+		e.Logger.Fatal("failed to open connection to database", err)
+	}
+	err = dbConn.Ping()
+	if err != nil {
+		e.Logger.Fatal("failed to ping database ", err)
+	}
+
 	// Register the routes
-	routes.SetupRoutes(e)
+	rest.SetupRoutes(e)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

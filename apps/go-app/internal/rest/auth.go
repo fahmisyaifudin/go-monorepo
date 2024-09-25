@@ -1,10 +1,17 @@
-package handler
+package rest
 
 import (
-	"github.com/labstack/echo/v4"
 	"go-app/internal/model"
 	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
+
+func SetupAuthRoutes(e *echo.Echo){
+	e.POST("/login", LoginHandler)
+	e.POST("/forgot-password", ForgotPasswordHandler)
+	e.PATCH("/reset-password", ResetPasswordHandler)
+}
 
 func LoginHandler(c echo.Context) error {
 	response := model.LoginResponse{

@@ -1,4 +1,4 @@
-package handler
+package rest
 
 import (
 	"go-app/internal/model"
