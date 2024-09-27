@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"go-app/internal/rest"
 	"net/http"
 	"os"
 	"os/signal"
@@ -12,8 +13,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	_ "github.com/lib/pq"
-
-	"go-app/internal/rest"
 )
 
 func main() {
@@ -45,7 +44,7 @@ func main() {
 	}
 
 	// Register the routes
-	rest.SetupRoutes(e)
+	rest.SetupRoutes(e, dbConn)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
